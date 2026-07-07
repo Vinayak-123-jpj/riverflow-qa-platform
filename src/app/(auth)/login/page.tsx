@@ -8,6 +8,7 @@ import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useAuthStore } from "@/store/Auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const BottomGradient = () => {
     return (
@@ -31,40 +32,44 @@ const LabelInputContainer = ({
 export default function Login() {
     const { login } = useAuthStore();
     const router = useRouter();
+    const { toast } = useToast();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState("");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('=== Login Form Submit ===');
 
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email");
         const password = formData.get("password");
 
-        console.log('Form data:', { email, password: '***' });
-
         if (!email || !password) {
-            setError(() => "Please fill out all fields");
+            toast({
+                title: "Error",
+                description: "Please fill out all fields",
+                variant: "destructive",
+            });
             return;
         }
 
-        setIsLoading(() => true);
-        setError(() => "");
+        setIsLoading(true);
 
-        console.log('Starting login...');
         const loginResponse = await login(email.toString(), password.toString());
-        console.log('Login response:', loginResponse);
 
         if (loginResponse.error) {
-            console.error('Login failed:', loginResponse.error);
-            setError(() => loginResponse.error!.message);
+            toast({
+                title: "Login Failed",
+                description: loginResponse.error.message,
+                variant: "destructive",
+            });
         } else {
-            console.log('Login successful, redirecting to home...');
+            toast({
+                title: "Success",
+                description: "Logged in successfully!",
+            });
             router.push("/");
         }
 
-        setIsLoading(() => false);
+        setIsLoading(false);
     };
 
     return (
@@ -81,8 +86,8 @@ export default function Login() {
                 with riverflow
             </p>
 
-            {error && (
-                <p className="mt-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
+            {isLoading && (
+                <p className="mt-8 text-center text-sm text-orange-500 dark:text-orange-400">Logging in...</p>
             )}
             <form className="my-8" onSubmit={handleSubmit}>
                 <LabelInputContainer className="mb-4">

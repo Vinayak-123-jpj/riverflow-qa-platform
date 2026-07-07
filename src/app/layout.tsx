@@ -6,6 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 import { cn } from "@/lib/utils";
 import Header from "./components/Header";
 import SessionProvider from "@/components/SessionProvider";
+import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: "RiverFlow - Q&A Platform",
   description: "Ask questions, share knowledge, and collaborate with developers worldwide",
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={cn(inter.className, "dark:bg-black dark:text-white")}>
         <SessionProvider />
         <Header />
-        {children}</body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

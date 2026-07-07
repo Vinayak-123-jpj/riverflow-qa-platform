@@ -58,44 +58,27 @@ export const useAuthStore = create<IAuthStore>()(
           const currentSession = sessions.sessions[0] || null
           set({session: currentSession, user})
         } catch (error) {
-          console.log(error)
+          // Session expired or invalid
         }
       },
 
       async login(email: string, password: string) {
         try {
-          console.log('Attempting login with:', email);
           const session = await account.createEmailPasswordSession(email, password)
-          console.log('Session created:', session);
           
-          // In Appwrite v15, the session is automatically set on the client
-          // We need to get the user using the authenticated session
           const user = await account.get<UserPrefs>()
-          console.log('User retrieved:', user);
           
           const {jwt} = await account.createJWT()
-          console.log('JWT created:', jwt);
           
           if (!user.prefs?.reputation) {
             await account.updatePrefs<UserPrefs>({ reputation: 0 })
-            console.log('User preferences initialized');
           }
 
           set({session, user, jwt})
-          console.log('Login successful, state updated');
           
           return { success: true }
 
         } catch (error) {
-          console.error('Login failed:', error);
-          if (error instanceof AppwriteException) {
-            console.error('Appwrite error details:', {
-              message: error.message,
-              type: error.type,
-              code: error.code,
-              response: error.response
-            });
-          }
           return {
             success: false,
             error: error instanceof AppwriteException ? error: null,
@@ -105,20 +88,9 @@ export const useAuthStore = create<IAuthStore>()(
 
       async createAccount(name:string, email: string, password: string) {
         try {
-          console.log('Creating account with:', { name, email });
           const result = await account.create(ID.unique(), email, password, name)
-          console.log('Account created successfully:', result);
           return {success: true}
         } catch (error) {
-          console.error('Account creation failed:', error);
-          if (error instanceof AppwriteException) {
-            console.error('Appwrite error details:', {
-              message: error.message,
-              type: error.type,
-              code: error.code,
-              response: error.response
-            });
-          }
           return {
             success: false,
             error: error instanceof AppwriteException ? error: null,

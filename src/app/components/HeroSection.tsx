@@ -17,7 +17,7 @@ export default async function HeroSection() {
             Query.limit(15),
         ]);
     } catch (error) {
-        console.log("Error fetching questions for hero section:", error);
+        // Error fetching questions for hero section
     }
 
     return (

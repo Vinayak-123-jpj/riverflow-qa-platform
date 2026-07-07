@@ -14,7 +14,6 @@ const LatestQuestions = async () => {
             Query.limit(5),
             Query.orderDesc("$createdAt"),
         ]);
-        console.log("Fetched Questions:", questions);
 
         questions.documents = await Promise.all(
             questions.documents.map(async ques => {
@@ -22,12 +21,12 @@ const LatestQuestions = async () => {
                     users.get<UserPrefs>(ques.authorId),
                     databases.listDocuments(db, answerCollection, [
                         Query.equal("questionId", ques.$id),
-                        Query.limit(1), // for optimization
+                        Query.limit(1),
                     ]),
                     databases.listDocuments(db, voteCollection, [
                         Query.equal("type", "question"),
                         Query.equal("typeId", ques.$id),
-                        Query.limit(1), // for optimization
+                        Query.limit(1),
                     ]),
                 ]);
 
@@ -44,11 +43,9 @@ const LatestQuestions = async () => {
             })
         );
     } catch (error) {
-        console.log("Error fetching latest questions:", error);
+        // Error fetching questions
     }
 
-    console.log("Latest question")
-    console.log(questions)
     return (
         <div className="space-y-6">
             {questions.documents.length === 0 ? (

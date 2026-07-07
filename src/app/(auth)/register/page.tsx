@@ -8,6 +8,7 @@ import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useAuthStore } from "@/store/Auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const BottomGradient = () => {
     return (
@@ -31,12 +32,11 @@ const LabelInputContainer = ({
 export default function Register() {
     const { login, createAccount } = useAuthStore();
     const router = useRouter();
+    const { toast } = useToast();
     const [isLoading, setIsLoading] = React.useState(false);
-    const [error, setError] = React.useState("");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('=== Registration Form Submit ===');
 
         const formData = new FormData(e.currentTarget);
         const firstname = formData.get("firstname");
@@ -44,42 +44,60 @@ export default function Register() {
         const email = formData.get("email");
         const password = formData.get("password");
 
-        console.log('Form data:', { firstname, lastname, email, password: '***' });
-
         if (!firstname || !lastname || !email || !password) {
-            setError(() => "Please fill out all fields");
+            toast({
+                title: "Error",
+                description: "Please fill out all fields",
+                variant: "destructive",
+            });
             return;
         }
 
-        setIsLoading(() => true);
-        setError(() => "");
+        if (password.toString().length < 8) {
+            toast({
+                title: "Error",
+                description: "Password must be at least 8 characters",
+                variant: "destructive",
+            });
+            return;
+        }
 
-        console.log('Starting account creation...');
+        setIsLoading(true);
+
         const response = await createAccount(
             `${firstname} ${lastname}`,
             email.toString(),
             password.toString()
         );
 
-        console.log('Account creation response:', response);
-
         if (response.error) {
-            console.error('Account creation failed:', response.error);
-            setError(() => response.error!.message);
+            toast({
+                title: "Registration Failed",
+                description: response.error.message,
+                variant: "destructive",
+            });
         } else {
-            console.log('Account created successfully, attempting login...');
+            toast({
+                title: "Account Created",
+                description: "Logging you in...",
+            });
             const loginResponse = await login(email.toString(), password.toString());
-            console.log('Login response:', loginResponse);
             if (loginResponse.error) {
-                console.error('Login failed:', loginResponse.error);
-                setError(() => loginResponse.error!.message);
+                toast({
+                    title: "Login Failed",
+                    description: "Please try logging in manually",
+                    variant: "destructive",
+                });
             } else {
-                console.log('Login successful, redirecting to home...');
+                toast({
+                    title: "Success",
+                    description: "Welcome to RiverFlow!",
+                });
                 router.push("/");
             }
         }
 
-        setIsLoading(() => false);
+        setIsLoading(false);
     };
 
     return (
@@ -96,8 +114,8 @@ export default function Register() {
                 to riverflow
             </p>
 
-            {error && (
-                <p className="mt-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
+            {isLoading && (
+                <p className="mt-8 text-center text-sm text-orange-500 dark:text-orange-400">Creating account...</p>
             )}
             <form className="my-8" onSubmit={handleSubmit}>
                 <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-x-2 md:space-y-0">
