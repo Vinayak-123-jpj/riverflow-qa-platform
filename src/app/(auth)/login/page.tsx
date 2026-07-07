@@ -36,10 +36,13 @@ export default function Login() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log('=== Login Form Submit ===');
 
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email");
         const password = formData.get("password");
+
+        console.log('Form data:', { email, password: '***' });
 
         if (!email || !password) {
             setError(() => "Please fill out all fields");
@@ -49,10 +52,15 @@ export default function Login() {
         setIsLoading(() => true);
         setError(() => "");
 
+        console.log('Starting login...');
         const loginResponse = await login(email.toString(), password.toString());
+        console.log('Login response:', loginResponse);
+
         if (loginResponse.error) {
+            console.error('Login failed:', loginResponse.error);
             setError(() => loginResponse.error!.message);
         } else {
+            console.log('Login successful, redirecting to home...');
             router.push("/");
         }
 

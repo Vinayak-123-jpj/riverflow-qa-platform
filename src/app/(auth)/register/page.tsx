@@ -36,12 +36,15 @@ export default function Register() {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log('=== Registration Form Submit ===');
 
         const formData = new FormData(e.currentTarget);
         const firstname = formData.get("firstname");
         const lastname = formData.get("lastname");
         const email = formData.get("email");
         const password = formData.get("password");
+
+        console.log('Form data:', { firstname, lastname, email, password: '***' });
 
         if (!firstname || !lastname || !email || !password) {
             setError(() => "Please fill out all fields");
@@ -51,19 +54,27 @@ export default function Register() {
         setIsLoading(() => true);
         setError(() => "");
 
+        console.log('Starting account creation...');
         const response = await createAccount(
             `${firstname} ${lastname}`,
             email.toString(),
             password.toString()
         );
 
+        console.log('Account creation response:', response);
+
         if (response.error) {
+            console.error('Account creation failed:', response.error);
             setError(() => response.error!.message);
         } else {
+            console.log('Account created successfully, attempting login...');
             const loginResponse = await login(email.toString(), password.toString());
+            console.log('Login response:', loginResponse);
             if (loginResponse.error) {
+                console.error('Login failed:', loginResponse.error);
                 setError(() => loginResponse.error!.message);
             } else {
+                console.log('Login successful, redirecting to home...');
                 router.push("/");
             }
         }
