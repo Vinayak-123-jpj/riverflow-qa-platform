@@ -27,22 +27,27 @@ const Footer = () => {
     },
   ];
   return (
-    <footer className="relative block overflow-hidden border-t border-solid border-white/30 py-20">
-      <div className="container mx-auto px-4">
-        <ul className="flex flex-wrap items-center justify-center gap-3">
+    <footer className="relative border-t border-border bg-card py-12">
+      <div className="container mx-auto max-w-6xl px-4">
+        <ul className="flex flex-wrap items-center justify-center gap-6">
           {items.map((item) => (
             <li key={item.href}>
-              <Link href={item.href}>{item.title}</Link>
+              <Link 
+                href={item.href}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {item.title}
+              </Link>
             </li>
           ))}
         </ul>
-        <div className="mt-4 text-center">
-          &copy; {new Date().getFullYear()} Riverpod
+        <div className="mt-6 text-center text-sm text-muted-foreground">
+          &copy; {new Date().getFullYear()} RiverFlow. All rights reserved.
         </div>
       </div>
       <AnimatedGridPattern
         numSquares={30}
-        maxOpacity={0.4}
+        maxOpacity={0.1}
         duration={3}
         repeatDelay={1}
         className={cn(

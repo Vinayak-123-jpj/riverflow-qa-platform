@@ -6,8 +6,7 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <HeroSection />
-      <div className="container mx-auto px-4 py-20">
-        <h2 className="mb-8 text-3xl font-bold">Latest Questions</h2>
+      <div className="container mx-auto max-w-6xl px-4 py-16">
         <LatestQuestions />
       </div>
       <Footer />

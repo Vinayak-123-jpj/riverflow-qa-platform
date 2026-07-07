@@ -47,9 +47,13 @@ const LatestQuestions = async () => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-foreground">Latest Questions</h2>
             {questions.documents.length === 0 ? (
-                <p className="text-gray-500">No questions yet. Be the first to ask!</p>
+                <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card p-12 text-center">
+                    <p className="text-lg font-medium text-muted-foreground">No questions yet</p>
+                    <p className="mt-2 text-sm text-muted-foreground">Be the first to ask a question!</p>
+                </div>
             ) : (
                 questions.documents.map(question => (
                     <QuestionCard key={question.$id} ques={question} />
