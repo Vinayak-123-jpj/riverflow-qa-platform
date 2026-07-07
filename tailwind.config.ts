@@ -2,7 +2,6 @@ import type { Config } from "tailwindcss";
 const flattenColorPalette = require("tailwindcss/lib/util/flattenColorPalette");
 const svgToDataUri = require("mini-svg-data-uri");
 
-// This plugin adds each Tailwind color as a global CSS variable, e.g. var(--gray-200).
 function addVariablesForColors({ addBase, theme }: any) {
     let allColors = flattenColorPalette(theme("colors"));
     let newVars = Object.fromEntries(
@@ -23,13 +22,61 @@ const config: Config = {
     ],
     theme: {
         extend: {
+            colors: {
+                border: "hsl(var(--border))",
+                input: "hsl(var(--input))",
+                ring: "hsl(var(--ring))",
+                background: "hsl(var(--background))",
+                foreground: "hsl(var(--foreground))",
+                primary: {
+                    DEFAULT: "hsl(var(--primary))",
+                    foreground: "hsl(var(--primary-foreground))",
+                },
+                secondary: {
+                    DEFAULT: "hsl(var(--secondary))",
+                    foreground: "hsl(var(--secondary-foreground))",
+                },
+                destructive: {
+                    DEFAULT: "hsl(var(--destructive))",
+                    foreground: "hsl(var(--destructive-foreground))",
+                },
+                muted: {
+                    DEFAULT: "hsl(var(--muted))",
+                    foreground: "hsl(var(--muted-foreground))",
+                },
+                accent: {
+                    DEFAULT: "hsl(var(--accent))",
+                    foreground: "hsl(var(--accent-foreground))",
+                },
+                popover: {
+                    DEFAULT: "hsl(var(--popover))",
+                    foreground: "hsl(var(--popover-foreground))",
+                },
+                card: {
+                    DEFAULT: "hsl(var(--card))",
+                    foreground: "hsl(var(--card-foreground))",
+                },
+                success: "hsl(var(--success))",
+                warning: "hsl(var(--warning))",
+                reputation: "hsl(var(--reputation))",
+            },
+            borderRadius: {
+                lg: "var(--radius)",
+                md: "calc(var(--radius) - 2px)",
+                sm: "calc(var(--radius) - 4px)",
+            },
             boxShadow: {
                 input: `0px 2px 3px -1px rgba(0,0,0,0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,
+                card: "0 0 0 1px hsl(var(--border)), 0 2px 4px hsl(224 71% 4% / 0.4)",
+                "card-hover": "0 0 0 1px hsl(var(--primary) / 0.3), 0 8px 24px hsl(224 71% 4% / 0.6)",
+                glow: "0 0 20px hsl(var(--primary) / 0.15)",
             },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
                 "gradient-conic":
                     "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+                "hero-gradient":
+                    "radial-gradient(ellipse 80% 50% at 50% -20%, hsl(217 91% 60% / 0.15), transparent)",
             },
             animation: {
                 grid: "grid 15s linear infinite",
@@ -39,8 +86,18 @@ const config: Config = {
                 shimmer: "shimmer 2s linear infinite",
                 "border-beam": "border-beam calc(var(--duration)*1s) infinite linear",
                 backgroundPositionSpin: "background-position-spin 3000ms infinite alternate",
+                "fade-in": "fadeIn 0.4s ease-out forwards",
+                "slide-up": "slideUp 0.4s ease-out forwards",
             },
             keyframes: {
+                fadeIn: {
+                    from: { opacity: "0" },
+                    to: { opacity: "1" },
+                },
+                slideUp: {
+                    from: { opacity: "0", transform: "translateY(12px)" },
+                    to: { opacity: "1", transform: "translateY(0)" },
+                },
                 "background-position-spin": {
                     "0%": { backgroundPosition: "top center" },
                     "100%": { backgroundPosition: "bottom center" },
@@ -55,23 +112,13 @@ const config: Config = {
                     "100%": { transform: "translateY(0)" },
                 },
                 "spin-around": {
-                    "0%": {
-                        transform: "translateZ(0) rotate(0)",
-                    },
-                    "15%, 35%": {
-                        transform: "translateZ(0) rotate(90deg)",
-                    },
-                    "65%, 85%": {
-                        transform: "translateZ(0) rotate(270deg)",
-                    },
-                    "100%": {
-                        transform: "translateZ(0) rotate(360deg)",
-                    },
+                    "0%": { transform: "translateZ(0) rotate(0)" },
+                    "15%, 35%": { transform: "translateZ(0) rotate(90deg)" },
+                    "65%, 85%": { transform: "translateZ(0) rotate(270deg)" },
+                    "100%": { transform: "translateZ(0) rotate(360deg)" },
                 },
                 slide: {
-                    to: {
-                        transform: "translate(calc(100cqw - 100%), 0)",
-                    },
+                    to: { transform: "translate(calc(100cqw - 100%), 0)" },
                 },
                 meteor: {
                     "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
@@ -82,29 +129,20 @@ const config: Config = {
                     },
                 },
                 shimmer: {
-                    from: {
-                        backgroundPosition: "0 0",
-                    },
-                    to: {
-                        backgroundPosition: "-200% 0",
-                    },
+                    from: { backgroundPosition: "0 0" },
+                    to: { backgroundPosition: "-200% 0" },
                 },
                 "shine-pulse": {
-                    "0%": {
-                        "background-position": "0% 0%",
-                    },
-                    "50%": {
-                        "background-position": "100% 100%",
-                    },
-                    to: {
-                        "background-position": "0% 0%",
-                    },
+                    "0%": { "background-position": "0% 0%" },
+                    "50%": { "background-position": "100% 100%" },
+                    to: { "background-position": "0% 0%" },
                 },
             },
         },
     },
     plugins: [
         addVariablesForColors,
+        require("tailwindcss-animate"),
         function ({ matchUtilities, theme }: any) {
             matchUtilities(
                 {

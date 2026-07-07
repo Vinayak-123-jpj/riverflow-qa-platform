@@ -2,45 +2,185 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 6%;
+    --card-foreground: 213 31% 91%;
+    --popover: 224 71% 6%;
+    --popover-foreground: 213 31% 91%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 215 28% 12%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 215 28% 12%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 215 28% 14%;
+    --accent-foreground: 213 31% 91%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 14%;
+    --input: 215 28% 14%;
+    --ring: 217 91% 60%;
+    --radius: 0.625rem;
+    --success: 142 71% 45%;
+    --warning: 38 92% 50%;
+    --reputation: 27 96% 61%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::selection {
+    @apply bg-primary/30 text-foreground;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(217 33% 17%);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(217 91% 60% / 0.5);
+  background: hsl(var(--border));
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(217 91% 60% / 0.7);
+  background: hsl(var(--muted-foreground) / 0.5);
 }
 
-/* Markdown editor dark mode fixes */
+/* Markdown editor dark mode */
 .w-md-editor {
-  background: hsl(222 47% 11%);
+  background: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: none !important;
 }
 
 .w-md-editor-text-pre,
 .w-md-editor-text-input,
 .w-md-editor-text {
-  background: hsl(222 47% 11%);
-  color: hsl(210 40% 98%);
+  background: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 .w-md-editor-toolbar {
-  background: hsl(217 33% 17%);
+  background: hsl(var(--secondary)) !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius) var(--radius) 0 0 !important;
 }
 
 .w-md-editor-toolbar li button {
-  color: hsl(210 40% 98%);
+  color: hsl(var(--foreground)) !important;
 }
 
 .w-md-editor-toolbar li button:hover {
-  background: hsl(217 91% 60% / 0.2);
+  background: hsl(var(--accent)) !important;
+}
+
+.wmde-markdown {
+  background: transparent !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.wmde-markdown pre {
+  background: hsl(var(--secondary)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: calc(var(--radius) - 2px) !important;
+}
+
+.wmde-markdown code {
+  background: hsl(var(--secondary)) !important;
+  color: hsl(var(--primary)) !important;
+}
+
+.wmde-markdown a {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Animations */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-400 via-violet-400 to-blue-400 bg-clip-text text-transparent;
+  }
+
+  .gradient-border {
+    position: relative;
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.5), hsl(271 91% 65% / 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .glass {
+    @apply border border-border/50 bg-card/80 backdrop-blur-xl;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--secondary)) 25%,
+    hsl(var(--accent)) 50%,
+    hsl(var(--secondary)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
