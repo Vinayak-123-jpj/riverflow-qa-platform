@@ -53,9 +53,10 @@ export const useAuthStore = create<IAuthStore>()(
 
       async verfiySession() {
         try {
-          const session = await account.getSession("current")
-          set({session})
-
+          const user = await account.get<UserPrefs>()
+          const sessions = await account.listSessions()
+          const currentSession = sessions.sessions[0] || null
+          set({session: currentSession, user})
         } catch (error) {
           console.log(error)
         }
@@ -67,7 +68,6 @@ export const useAuthStore = create<IAuthStore>()(
           const [user, {jwt}] = await Promise.all([
             account.get<UserPrefs>(),
             account.createJWT()
-
           ])
           if (!user.prefs?.reputation) await account.updatePrefs<UserPrefs>({
             reputation: 0
@@ -78,12 +78,10 @@ export const useAuthStore = create<IAuthStore>()(
           return { success: true}
 
         } catch (error) {
-
           console.log(error)
           return {
             success: false,
             error: error instanceof AppwriteException ? error: null,
-            
           }
         }
       },
@@ -97,16 +95,14 @@ export const useAuthStore = create<IAuthStore>()(
           return {
             success: false,
             error: error instanceof AppwriteException ? error: null,
-            
           }
         }
       },
 
       async logout() {
         try {
-          await account.deleteSessions()
+          await account.deleteSession('current')
           set({session: null, jwt: null, user: null})
-          
         } catch (error) {
           console.log(error)
         }

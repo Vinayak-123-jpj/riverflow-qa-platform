@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { useAuthStore } from "@/store/Auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const BottomGradient = () => {
     return (
@@ -29,6 +30,7 @@ const LabelInputContainer = ({
 
 export default function Register() {
     const { login, createAccount } = useAuthStore();
+    const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
     const [error, setError] = React.useState("");
 
@@ -61,6 +63,8 @@ export default function Register() {
             const loginResponse = await login(email.toString(), password.toString());
             if (loginResponse.error) {
                 setError(() => loginResponse.error!.message);
+            } else {
+                router.push("/");
             }
         }
 
