@@ -2,58 +2,61 @@ import { avatars } from "@/models/client/config";
 import { users } from "@/models/server/config";
 import { UserPrefs } from "@/store/Auth";
 import convertDateToRelativeTime from "@/utils/relativeTime";
+import { Badge } from "@/components/ui/badge";
 import React from "react";
 import EditButton from "./EditButton";
 import Navbar from "./Navbar";
-import { IconClockFilled, IconUserFilled } from "@tabler/icons-react";
+import { Clock, User } from "lucide-react";
 
 const Layout = async ({
-    children,
-    params,
+  children,
+  params,
 }: {
-    children: React.ReactNode;
-    params: { userId: string; userSlug: string };
+  children: React.ReactNode;
+  params: { userId: string; userSlug: string };
 }) => {
-    const user = await users.get<UserPrefs>(params.userId);
+  const user = await users.get<UserPrefs>(params.userId);
 
-    return (
-        <div className="container mx-auto space-y-4 px-4 pb-20 pt-32">
-            <div className="flex flex-col gap-4 sm:flex-row">
-                <div className="w-40 shrink-0">
-                    <picture className="block w-full">
-                        <img
-                            src={avatars.getInitials(user.name, 200, 200).href}
-                            alt={user.name}
-                            className="h-full w-full rounded-xl object-cover"
-                        />
-                    </picture>
-                </div>
-                <div className="w-full">
-                    <div className="flex items-start justify-between">
-                        <div className="block space-y-0.5">
-                            <h1 className="text-3xl font-bold">{user.name}</h1>
-                            <p className="text-lg text-gray-500">{user.email}</p>
-                            <p className="flex items-center gap-1 text-sm font-bold text-gray-500">
-                                <IconUserFilled className="w-4 shrink-0" /> Dropped{" "}
-                                {convertDateToRelativeTime(new Date(user.$createdAt))},
-                            </p>
-                            <p className="flex items-center gap-1 text-sm text-gray-500">
-                                <IconClockFilled className="w-4 shrink-0" /> Last activity&nbsp;
-                                {convertDateToRelativeTime(new Date(user.$updatedAt))}
-                            </p>
-                        </div>
-                        <div className="shrink-0">
-                            <EditButton />
-                        </div>
-                    </div>
-                </div>
+  return (
+    <div className="container relative mx-auto max-w-5xl space-y-8 px-4 pb-20 pt-28">
+      <div className="absolute inset-x-0 top-0 h-64 bg-hero-gradient pointer-events-none" />
+
+      <div className="relative flex flex-col gap-6 rounded-2xl border border-border bg-card/60 p-6 backdrop-blur-sm sm:flex-row">
+        <img
+          src={avatars.getInitials(user.name, 112, 112).href}
+          alt={user.name}
+          className="h-24 w-24 shrink-0 rounded-2xl object-cover ring-2 ring-border sm:h-28 sm:w-28"
+        />
+        <div className="flex w-full flex-col items-start justify-between gap-4 sm:flex-row">
+          <div className="space-y-1.5">
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
+              {user.name}
+            </h1>
+            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5" />
+                Joined {convertDateToRelativeTime(new Date(user.$createdAt))}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5" />
+                Active {convertDateToRelativeTime(new Date(user.$updatedAt))}
+              </span>
+              <Badge variant="reputation">
+                {user.prefs.reputation} reputation
+              </Badge>
             </div>
-            <div className="flex flex-col gap-4 sm:flex-row">
-                <Navbar />
-                <div className="w-full">{children}</div>
-            </div>
+          </div>
+          <EditButton />
         </div>
-    );
+      </div>
+
+      <div className="relative flex flex-col gap-6 sm:flex-row">
+        <Navbar />
+        <div className="w-full min-w-0">{children}</div>
+      </div>
+    </div>
+  );
 };
 
 export default Layout;

@@ -1,60 +1,55 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import React from "react";
 
 const Pagination = ({
-    className,
-    total,
-    limit,
+  className,
+  total,
+  limit,
 }: {
-    className?: string;
-    limit: number;
-    total: number;
+  className?: string;
+  limit: number;
+  total: number;
 }) => {
-    const searchParams = useSearchParams();
-    const page = searchParams.get("page") || "1";
-    const totalPages = Math.ceil(total / limit);
-    const router = useRouter();
-    const pathnanme = usePathname();
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") || "1";
+  const totalPages = Math.max(Math.ceil(total / limit), 1);
+  const router = useRouter();
+  const pathname = usePathname();
 
-    const prev = () => {
-        if (page <= "1") return;
-        const pageNumber = parseInt(page);
-        const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set("page", `${pageNumber - 1}`);
-        router.push(`${pathnanme}?${newSearchParams}`);
-    };
+  const goTo = (n: number) => {
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set("page", `${n}`);
+    router.push(`${pathname}?${newSearchParams}`);
+  };
 
-    const next = () => {
-        if (page >= `${totalPages}`) return;
-        const pageNumber = parseInt(page);
-        const newSearchParams = new URLSearchParams(searchParams);
-        newSearchParams.set("page", `${pageNumber + 1}`);
-        router.push(`${pathnanme}?${newSearchParams}`);
-    };
-
-    return (
-        <div className="flex items-center justify-center gap-4">
-            <button
-                className={`${className} rounded-lg bg-white/10 px-2 py-0.5 duration-200 hover:bg-white/20`}
-                onClick={prev}
-                disabled={page <= "1"}
-            >
-                Previous
-            </button>
-            <span>
-                {page} of {totalPages || "1"} {/* incase totalPage is 0 */}
-            </span>
-            <button
-                className={`${className} rounded-lg bg-white/10 px-2 py-0.5 duration-200 hover:bg-white/20`}
-                onClick={next}
-                disabled={page >= `${totalPages}`}
-            >
-                Next
-            </button>
-        </div>
-    );
+  return (
+    <div
+      className={cn("flex items-center justify-center gap-3 pt-6", className)}
+    >
+      <button
+        className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-40"
+        onClick={() => goTo(parseInt(page) - 1)}
+        disabled={page <= "1"}
+      >
+        <ChevronLeft className="h-4 w-4" /> Prev
+      </button>
+      <span className="text-sm text-muted-foreground">
+        Page <span className="font-semibold text-foreground">{page}</span> of{" "}
+        {totalPages}
+      </span>
+      <button
+        className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-40"
+        onClick={() => goTo(parseInt(page) + 1)}
+        disabled={page >= `${totalPages}`}
+      >
+        Next <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
 };
 
 export default Pagination;
