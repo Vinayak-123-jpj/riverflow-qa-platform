@@ -49,28 +49,6 @@ A modern full-stack Question & Answer platform inspired by Stack Overflow, where
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots here after uploading them.
-
-### Home Page
-
-<img src="screenshots/home.png" width="100%"/>
-
-### Questions
-
-<img src="screenshots/questions.png" width="100%"/>
-
-### Ask Question
-
-<img src="screenshots/ask-question.png" width="100%"/>
-
-### Profile
-
-<img src="screenshots/profile.png" width="100%"/>
-
----
-
 ## ⚙️ Installation
 
 Clone the repository
